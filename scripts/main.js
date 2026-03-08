@@ -107,4 +107,6 @@ const displayIssues = (issues) => {
   });
 };
 
+
+
 loadInitialData();
