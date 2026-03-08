@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Issues Tracker - Login</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-base-200 min-h-screen flex items-center justify-center p-4">
+    <div
+      class="card bg-base-100 w-full max-w-md shadow-xl border-2 border-blue-400"
+    >
+      <div class="card-body items-center text-center">
+        <div class="mb-6">
+          <i class="fa-brands fa-github text-6xl text-base-content mb-4"></i>
+          <h1 class="card-title text-2xl font-bold justify-center">
+            GitHub Issues Tracker
+          </h1>
+          <p class="text-slate-500 text-sm">Sign in to manage your issues</p>
+        </div>
+
+        <div class="form-control w-full gap-4">
+          <div>
+            <label class="label">
+              <span class="label-text font-bold">Username</span>
+            </label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Enter Username"
+              class="input input-bordered w-full focus:input-primary"
+            />
+            <label class="label py-1">
+              <span class="label-text-alt text-secondary font-semibold"
+                >Default: admin</span
+              >
+            </label>
+          </div>
+
+          <div>
+            <label class="label">
+              <span class="label-text font-bold">Password</span>
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter Password"
+              class="input input-bordered w-full focus:input-primary"
+            />
+            <label class="label py-1">
+              <span class="label-text-alt text-secondary font-semibold"
+                >Default: admin123</span
+              >
+            </label>
+          </div>
+
+          <div class="card-actions mt-2">
+            <button
+              id="login-btn"
+              class="btn btn-primary w-full text-lg uppercase"
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+
+        <div class="divider text-slate-400 text-xs font-bold my-4">OR</div>
+
+        <div
+          class="bg-base-200 p-4 rounded-lg w-full text-center border border-dashed border-base-300"
+        >
+          <p class="text-xs text-slate-500 mb-2 uppercase tracking-widest">
+            Demo Credentials
+          </p>
+          <div class="text-sm">
+            <p><strong>Username:</strong> admin</p>
+            <p><strong>Password:</strong> admin123</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("login-btn")
+        .addEventListener("click", function () {
+          const user = document.getElementById("username").value;
+          const pass = document.getElementById("password").value;
+
+          // Logic requirement: Check against default credentials
+          if (user === "admin" && pass === "admin123") {
+            window.location.href = "main.html";
+          } else {
+            alert("Invalid Credentials! Use admin / admin123");
+          }
+        });
+
+        // Something extra: Allow Enter key to trigger login
+      // Select the elements
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password"); 
+      const loginBtn = document.getElementById("login-btn"); 
+
+      // 1. Move from Username to Password
+      usernameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          passwordInput.focus();
+        }
+      });
+
+      // 2. Trigger Login from Password
+      passwordInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          loginBtn.click(); // This triggers your existing handleLogin function
+        }
+      });
+    </script>
+  </body>
+</html>
