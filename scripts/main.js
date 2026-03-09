@@ -131,4 +131,39 @@ const filterIssues = (category) => {
   }
 };
 
+// Search function
+const handleSearch = async () => {
+  const searchField = document.getElementById("search-input");
+  const searchText = searchField.value.trim();
+  const grid = document.getElementById("issues-grid");
+  const spinner = document.getElementById("loading-spinner");
+
+  
+  spinner.classList.remove("hidden");
+  grid.classList.add("opacity-50");
+
+  try {
+    const res = await fetch(
+      `https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`,
+    );
+    const result = await res.json();
+
+    if (result.status === "success") {
+      displayIssues(result.data); 
+    }
+  } finally {
+    spinner.classList.add("hidden");
+    grid.classList.remove("opacity-50");
+  }
+};
+
+// Enter triggers search
+document.getElementById("search-input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    handleSearch();
+  }
+});
+
+
+
 loadInitialData();
