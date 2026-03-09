@@ -107,6 +107,28 @@ const displayIssues = (issues) => {
   });
 };
 
+//3. Tab Filtering
+const filterIssues = (category) => {
+  // Update Active Styles
+  const tabs = ["all", "open", "closed"];
+  tabs.forEach((tab) => {
+    const btn = document.getElementById(`tab-${tab}`);
+    if (tab === category) {
+      btn.className =
+        "btn bg-[#631dfa] hover:bg-[#5215d6] text-white border-none rounded-md px-10 h-11 min-h-0 text-sm font-bold shadow-md";
+    } else {
+      btn.className =
+        "btn bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 rounded-md px-10 h-11 min-h-0 text-sm font-semibold";
+    }
+  });
 
+  // Filter Logic
+  if (category === "all") {
+    displayIssues(allIssues);
+  } else {
+    const filtered = allIssues.filter((item) => item.status === category);
+    displayIssues(filtered);
+  }
+};
 
 loadInitialData();
