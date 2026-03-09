@@ -20,7 +20,7 @@ const loadInitialData = async () => {
   }
 };
 
-// 2.Grid Generator
+// 2. Cards display
 const displayIssues = (issues) => {
   const grid = document.getElementById("issues-grid");
   const countElement = document.getElementById("issue-count");
@@ -54,14 +54,12 @@ const displayIssues = (issues) => {
         if (lowerLabel === "bug") {
           icon = "fa-bug";
           colors = "bg-rose-50 text-rose-500 border-rose-100";
-        }
-        else if (lowerLabel === "help wanted") {
+        } else if (lowerLabel === "help wanted") {
           icon = "fa-circle-dot"; // Or fa-life-ring
           colors = "bg-amber-50 text-amber-500 border-amber-200";
         } else if (lowerLabel === "documentation") {
           icon = "fa-book";
           colors = "bg-blue-50 text-blue-500 border-blue-100";
-
         } else if (lowerLabel === "enhancement") {
           icon = "fa-wand-magic-sparkles";
           colors = "bg-green-50 text-green-500 border-green-100";
@@ -131,14 +129,18 @@ const filterIssues = (category) => {
   }
 };
 
-// Search function
+//4. Search function
 const handleSearch = async () => {
   const searchField = document.getElementById("search-input");
   const searchText = searchField.value.trim();
   const grid = document.getElementById("issues-grid");
   const spinner = document.getElementById("loading-spinner");
 
-  
+  if (!searchText) {
+    console.log("Search ignored: Input is empty");
+    return;
+  }
+
   spinner.classList.remove("hidden");
   grid.classList.add("opacity-50");
 
@@ -149,7 +151,7 @@ const handleSearch = async () => {
     const result = await res.json();
 
     if (result.status === "success") {
-      displayIssues(result.data); 
+      displayIssues(result.data);
     }
   } finally {
     spinner.classList.add("hidden");
@@ -164,6 +166,92 @@ document.getElementById("search-input").addEventListener("keydown", (e) => {
   }
 });
 
+//5. Modal
+const loadSingleIssue = async (id) => {
+  try {
+    const res = await fetch(
+      `https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`,
+    );
+    const result = await res.json();
+    const issue = result.data;
+    const modal = document.getElementById("issue_modal");
 
+    const modalContainer = document.getElementById("modal-content");
 
+    const isOpen = issue.status === "open";
+    const statusClass = isOpen ? "bg-emerald-500" : "bg-[#631dfa]";
+
+    // 2. Format labels
+    const labelsHtml = issue.labels
+      .map((label) => {
+        const lowerLabel = label.toLowerCase();
+
+        let icon = "fa-tag";
+        let colors = "bg-emerald-50 text-emerald-500 border-emerald-100";
+
+        if (lowerLabel === "bug") {
+          icon = "fa-bug";
+          colors = "bg-rose-50 text-rose-500 border-rose-100";
+        } else if (lowerLabel === "help wanted") {
+          icon = "fa-circle-dot";
+          colors = "bg-amber-50 text-amber-500 border-amber-200";
+        } else if (lowerLabel === "documentation") {
+          icon = "fa-book";
+          colors = "bg-blue-50 text-blue-500 border-blue-100";
+        } else if (lowerLabel === "enhancement") {
+          icon = "fa-wand-magic-sparkles";
+          colors = "bg-green-50 text-green-500 border-green-100";
+        }
+
+        return `
+        <span class="flex items-center gap-1.5 px-3 py-1 rounded-full border ${colors} text-[10px] font-bold uppercase tracking-tight">
+            <i class="fa-solid ${icon} text-[9px]"></i> 
+            ${label}
+        </span>
+    `;
+      })
+      .join("");
+
+    modalContainer.innerHTML = `
+            <div class="p-2">
+                <h2 class="text-2xl font-extrabold mb-2">${issue.title}</h2>
+                
+                <div class="flex items-center gap-2 mb-6 text-sm">
+                    <span class="${statusClass} text-white px-3 py-1 rounded-full text-xs font-bold capitalize">
+                        ${issue.status}
+                    </span>
+                    <span class="text-slate-400 font-medium">•</span>
+                    <span class="text-slate-500 font-medium">Opened by <span class="text-slate-700 font-bold">${issue.author}</span></span>
+                    <span class="text-slate-400 font-medium">•</span>
+                    <span class="text-slate-500 font-medium">${new Date(issue.createdAt).toLocaleDateString()}</span>
+                </div>
+
+                <div class="flex gap-2 mb-6">
+                    ${labelsHtml}
+                </div>
+
+                <p class="text-slate-500 leading-relaxed mb-8 text-sm">
+                    ${issue.description}
+                </p>
+
+                <div class="grid grid-cols-2 gap-4  p-6 rounded-2xl border">
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold mb-1 uppercase tracking-wider">Assignee:</p>
+                        <p class="font-extrabold">${issue.assignee || "Unassigned"}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold mb-1 uppercase tracking-wider">Priority:</p>
+                        <span class="bg-rose-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase">
+                            ${issue.priority}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+    modal.showModal();
+  } catch (error) {
+    console.error("Failed to load issue details:", error);
+  }
+};
 loadInitialData();
